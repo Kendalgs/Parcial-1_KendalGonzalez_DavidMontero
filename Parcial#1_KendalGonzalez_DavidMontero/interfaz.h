@@ -3,6 +3,8 @@
 
 #include "std.h"
 #include "utiles.h"
+#include "listaPlaylist.h"
+
 
 
 class interfaz
@@ -14,12 +16,9 @@ public:
 	virtual int seleccionarOpcion();
 	virtual void mostrarMenu();
 private:
-	/*PersonaLibro* _PersonaLibro;
-	persona* _persona;
-	libro* _libro;
+	listaPlaylist* _listaPlaylist;
 	static const string archivo;
-	static const string archivo1;
-	static const string archivo2;*/
+
 
 };
 

@@ -1,37 +1,23 @@
-#ifndef LISTAPLAYLIST_H
-#define LISTAPLAYLIST_H
-
+#pragma once
+#include "std.h"
 #include "lista.h"
-#include "Usuario.h"
 #include "Cancion.h"
 
-class listaPlaylist
-{
-protected:
-	string Nombre;
-	Cancion* _cancion;
-	Usuario* _usuario;
 
+class listaPlaylist : public lista<Cancion> {
 public:
-	// Constructor
-	listaPlaylist(string listNombre, Usuario* listUsuario, Cancion* listCancion);
+    listaPlaylist();
+    virtual ~listaPlaylist();
+    listaPlaylist(ifstream&);
+    virtual bool guardar(ofstream&);
+    static void deserialize(ifstream&, listaPlaylist*);
+    static bool serialize(ofstream&, listaPlaylist*);
+    int totalCanciones() const;
+    virtual string toString() const;
+    void eliminar(string nombre, string artista);
+    int duracionTotal() const;
 
-	// Destructor
-	~listaPlaylist();
-
-	// Getters
-	string getNombre();
-	Usuario* getUsuario();
-	Cancion* getCancion();
-
-	// Setters
-	void setUsuario(Usuario* listUsuario);
-	void setCancion(Cancion* listMusica);
-	void setNombre(string listNombre);
-
-	// Otros Metodos
-	string toString() const;
-	string archivoPlaylist();
 };
 
-#endif // !LISTAPLAYLIST_H
+
+

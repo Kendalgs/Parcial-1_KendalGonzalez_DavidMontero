@@ -5,35 +5,27 @@
 
 class Cancion
 {
-protected:
-	string Nombre;
-	string Artista;
-	int Duracion;
+    protected:
+        string nombre;
+        string artista;
+        int duracion;
 
-public:
-	// Constructores
-	Cancion();
-	Cancion(
-		string cNombre,
-		string cArtista,
-		int cDuracion
-	);
+    public:
+        Cancion(string = "", string = "", int = 0);
+        Cancion(const Cancion& orig);
+        virtual ~Cancion();
+        Cancion(ifstream&);
+        virtual bool guardar(ofstream&);
+        static void deserialize(ifstream&, Cancion*);
+        static bool serialize(ofstream&, Cancion*);
 
-	// Destructor
-	~Cancion();
-
-	// Getters
-	string getNombre();
-	string getArtista();
-	int getDuracion();
-
-	// Setters
-	void setNombre(string cNombre);
-	void setArtista(string cArtista);
-	void setDuracion(int cDuracion);
-
-	// Otros Metodos
-	string toString() const;
-};
+        virtual void setNombre(string);
+        virtual void setArtista(string);
+        virtual void setDuracion(int);
+        virtual string getNombre() const;
+        virtual string getArtista() const;
+        virtual int getDuracion() const;
+        virtual string toString() const;
+    };
 
 #endif // !CANCION_H

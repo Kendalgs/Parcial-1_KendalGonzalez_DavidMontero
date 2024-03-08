@@ -21,6 +21,7 @@ string sstring::deserialize(ifstream& in) {
     return r;
 }
 
+
 // Serializa una cadena en un flujo de salida.
 bool sstring::serialize(ofstream& out, const string& s) {
     bool r = true;
@@ -34,5 +35,18 @@ bool sstring::serialize(ofstream& out, const string& s) {
     out.write(s.c_str(), static_cast<std::streamsize>(n));
 
     // Devuelve true si la operación de escritura fue exitosa.
+    return out.good();
+}
+
+// Metodod para deserializar un entero
+int sstring::deserializeInt(ifstream& in) {
+    int result = 0;
+    in.read(reinterpret_cast<char*>(&result), sizeof(int));
+    return result;
+}
+
+// Metodod para serializar un entero
+bool sstring::serializeInt(ofstream& out, int value) {
+    out.write(reinterpret_cast<const char*>(&value), sizeof(int));
     return out.good();
 }

@@ -1,40 +1,28 @@
-#ifndef USUARIO_H
-#define USUARIO_H
+#ifndef CANCION_H
+#define CANCION_H
 
 #include "std.h"
 
 class Usuario
 {
 protected:
-	string Username;
-	string Nombre;
-	string TipoSubscripcion;
+    string nombre;
+    string tipoSuscripcion;
 
 public:
-	// Constructores
-	Usuario();
-	Usuario(
-		string uUsername,
-		string uNombre,
-		string uTipoSubscripcion
-	);
+    Usuario(string = "", string = "");
+    Usuario(const Usuario& orig);
+    virtual ~Usuario();
+    Usuario(ifstream&);
+    virtual bool guardar(ofstream&);
+    static void deserialize(ifstream&, Usuario*);
+    static bool serialize(ofstream&, Usuario*);
 
-	// Destructor
-	~Usuario();
-
-	// Getters
-	string getUsername();
-	string getNombre();
-	string getTipoSubscripcion();
-
-	// Setters
-	void setUsername(string uUsername);
-	void setNombre(string uNombre);
-	void setTipoSubscripcion(string uTipoSubscripcion);
-
-	// Otros Metodos
-	string toString() const;
-	string archivoUsuario();
+    virtual void setNombre(string);
+    virtual void setTipoSuscripcion(string);
+    virtual string getNombre() const;
+    virtual string getTipoSuscripcion() const;
+    virtual string toString() const;
 };
 
-#endif // !USUARIO_H
+#endif // !CANCION_H

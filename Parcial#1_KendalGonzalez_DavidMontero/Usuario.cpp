@@ -1,45 +1,63 @@
 #include "Usuario.h"
+#include "sstring.h"
 
-// Constructores
-Usuario::Usuario() : Username("No definido"), Nombre("No definido"), TipoSubscripcion("No definido")
-{ }
-Usuario::Usuario(
-	string uUsername,
-	string uNombre,
-	string uTipoSubscripcion
-) {
-	Username = uUsername;
-	Nombre = uNombre;
-	TipoSubscripcion = uTipoSubscripcion;
+Usuario::Usuario(string nom, string tS) : nombre(nom), tipoSuscripcion(tS) {
+
 }
 
-// Destructores
-Usuario::~Usuario() { }
-
-// Getters
-string Usuario::getUsername() { return Username; }
-string Usuario::getNombre() { return Nombre; }
-string Usuario::getTipoSubscripcion() { return TipoSubscripcion; }
-
-// Setters
-void Usuario::setNombre(string uNombre) { Nombre = uNombre; }
-void Usuario::setUsername(string uUsername) { Username = uUsername; }
-void Usuario::setTipoSubscripcion(string uTipoSubscripcion) { TipoSubscripcion = uTipoSubscripcion; }
-
-// Otros Metodos
-string Usuario::toString() const
-{
-	stringstream valor;
-
-	valor << "--  Username: " << Username << endl;
-	valor << "--  Nombre: " << Nombre << endl;
-	valor << "--  Tipo de Subscripcion: " << TipoSubscripcion << endl;
-	valor << "----------------------------------------" << endl;
-
-	return valor.str();
+Usuario::Usuario(const Usuario& orig) {
+    this->nombre = orig.getNombre();
+    this->tipoSuscripcion = orig.getTipoSuscripcion();
 }
 
-string Usuario::archivoUsuario()
-{
-	return string(Nombre + "/" + Username + "/" + TipoSubscripcion);
+// Destructor por defecto
+Usuario::~Usuario() {
+}
+
+Usuario::Usuario(ifstream& entrada1) {
+    deserialize(entrada1, this);
+}
+
+bool Usuario::guardar(ofstream& salida1) {
+    return serialize(salida1, (Usuario*)this);
+}
+
+void Usuario::deserialize(ifstream& entrada1, Usuario* u) {
+    u->nombre = sstring::deserialize(entrada1);
+    u->tipoSuscripcion = sstring::deserialize(entrada1);
+
+    if (!entrada1.good())
+        throw - 1;
+}
+
+bool Usuario::serialize(ofstream& salida1, Usuario* u) {
+    sstring::serialize(salida1, u->nombre);
+    sstring::serialize(salida1, u->tipoSuscripcion);
+    return salida1.good();
+}
+
+void Usuario::setNombre(string n) {
+    nombre = n;
+}
+
+void Usuario::setTipoSuscripcion(string tS) {
+    tipoSuscripcion = tS;
+}
+
+string Usuario::getNombre() const {
+    return this->nombre;
+}
+
+string Usuario::getTipoSuscripcion() const {
+    return this->tipoSuscripcion;
+}
+
+string Usuario::toString() const {
+    stringstream r;
+    r << BOLDRED << "Usuario:" << RESET << endl;
+    r << "Nombre: " << this->getNombre() << endl;
+
+    r << "Tipo Suscripcion: " << this->getTipoSuscripcion() << endl;
+
+    return r.str();
 }

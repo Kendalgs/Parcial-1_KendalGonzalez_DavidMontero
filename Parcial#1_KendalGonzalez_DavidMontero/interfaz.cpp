@@ -6,16 +6,14 @@
 #define MAGENTA "\033[35m"  
 
 // Ruta de los archivos de datos
-const string interfaz::archivo = "..\\Asociados.txt";
-const string interfaz::archivo1 = "..\\Personas.txt";
-const string interfaz::archivo2 = "..\\Libros.txt";
+const string interfaz::archivo = "..\\Playlist.txt";
 
 // Constructor de la clase interfaz
 interfaz::interfaz()
 {
     ifstream entrada(archivo.c_str());
     try {
-        _PersonaLibro = new PersonaLibro(entrada);
+        _listaPlaylist = new listaPlaylist(entrada);
         if (entrada.good()) {
             cout << "Se cargaron los datos del archivo exitosamente" << endl;
             cin.get();
@@ -29,40 +27,7 @@ interfaz::interfaz()
     }
     entrada.close();
 
-    ifstream entrada1(archivo1.c_str());
-    try {
-        _persona = new persona(entrada1);
-        if (entrada1.good()) {
-            cout << "Se cargaron los datos del archivo exitosamente" << endl;
-            cin.get();
-        }
-    }
-    catch (...) {
 
-        cout << "Ocurrio un error, no se cargaron los datos del archivo" << endl;
-
-        cin.get();
-    }
-    entrada1.close();
-
-    ifstream entrada2(archivo2.c_str());
-    try {
-        _libro = new libro(entrada2);
-        if (entrada2.good()) {
-            cout << "Se cargaron los datos del archivo exitosamente" << endl;
-            cin.get();
-        }
-    }
-    catch (...) {
-
-        cout << "Ocurrio un error, no se cargaron los datos del archivo" << endl;
-
-        cin.get();
-    }
-    entrada2.close();
-
-
-}
 
 // Destructor de la clase interfaz
 interfaz::~interfaz()
@@ -86,15 +51,17 @@ int interfaz::seleccionarOpcion()
 void interfaz::mostrarOpciones()
 {
     cout << "\n\t\t";
-    cout << "1. Agregar persona " << endl;
+    cout << "1. Agregar Cancion " << endl;
     cout << "\t\t";
-    cout << "2. Agregar Libro " << endl;
+    cout << "2.Eliminar Cancion " << endl;
     cout << "\t\t";
-    cout << "3. Mostrar Persona/Libros " << endl;
+    cout << "3. Mostrar Duracion Total " << endl;
     cout << "\t\t";
-    cout << "4. Mostrar Libros asociados a Persona" << endl;
+    cout << "4. Mostrar Canciones " << endl;
     cout << "\t\t";
-    cout << "5. Salir " << endl;
+    cout << "5. Cambiar Suscripcion " << endl;
+    cout << "\t\t";
+    cout << "6. Salir " << endl;
 }
 
 // Función para mostrar el menú de consultar del usuario normal
@@ -103,21 +70,11 @@ void interfaz::mostrarMenu()
     int op = 0;
     int opcion = 0;
     string nombre;
-    string apellido;
-    string titulo;
-    string id;
-    libro* li = NULL;
-    persona* pe = NULL;
-    persona* ap = NULL;
-    libro* al = NULL;
-    listaLibros* listaLi = NULL;
-    listaLi = new listaLibros();
-    listaPersonas* listaPe = NULL;
-    listaPe = new listaPersonas();
-    lista <PersonaLibro> listaPL;
-    ofstream salida(archivo.c_str());//PersonaLibro
-    ofstream salida1(archivo1.c_str());//Persona
-    ofstream salida2(archivo2.c_str());//Libro
+    string artista;
+    int duracion;
+
+    lista <listaPlaylist> listaPL;
+    ofstream salida(archivo.c_str());
     bool final = false;
 
     while (!final) {
@@ -143,10 +100,13 @@ void interfaz::mostrarMenu()
             cout << "\n\n\t\t";
             getline(cin, nombre);
             cout << "\n\n\t\t";
-            cout << "Digite el apellido: ";
+            cout << "Digite el artista: ";
             cout << "\n\n\t\t";
-            getline(cin, apellido);
-            pe = new persona(nombre, apellido);
+            getline(cin, artista);
+            cout << "Digite la duracion: ";
+            cout << "\n\n\t\t";
+            getline(cin, duracion);
+            c = new Cancion(nombre, artista, duracion);
             listaPe->agregarFinal(pe);
             cout << "Se ha agregado una persona" << endl;
             system("pause");

@@ -1,39 +1,75 @@
 #include "Cancion.h"
+#include "sstring.h"
 
-// Constructores
-Cancion::Cancion() : Nombre("No definido"), Artista("No definido"), Duracion(0){}
+Cancion::Cancion(string nom, string art, int d) : nombre(nom), artista(art), duracion(d) {
 
-Cancion::Cancion(
-	string cNombre,
-	string cArtista,
-	int cDuracion
-) {
-	Nombre = cNombre;
-	Artista = cArtista;
-	Duracion = cDuracion;
 }
 
-// Destructor
-Cancion::~Cancion() { }
+Cancion::Cancion(const Cancion& orig) {
+    this->nombre = orig.getNombre();
+    this->artista = orig.getArtista();
+    this->duracion = orig.getDuracion();
+}
 
-// Getters
-string Cancion::getNombre() { return Nombre; }
-string Cancion::getArtista() { return Artista; }
-int Cancion::getDuracion() { return Duracion; }
+// Destructor por defecto
+Cancion::~Cancion() {
+}
 
-// Setters
-void Cancion::setNombre(string cNombre) { Nombre = cNombre; }
-void Cancion::setArtista(string cArtista) { Artista = cArtista; }
-void Cancion::setDuracion(int cDuracion) { Duracion = cDuracion; }
+Cancion::Cancion(ifstream& entrada1) {
+    deserialize(entrada1, this);
+}
 
-string Cancion::toString() const
-{
-	stringstream valor;
+bool Cancion::guardar(ofstream& salida1) {
+    return serialize(salida1, (Cancion*)this);
+}
 
-	valor << "--  Nombre de Canción: " << Nombre << endl;
-	valor << "--  Artista: " << Artista << endl;
-	valor << "--  Duración: " << Duracion << " segundos" << endl;
-	valor << "----------------------------------------" << endl;
 
-	return valor.str();
+void Cancion::deserialize(ifstream& entrada1, Cancion* c) {
+    c->nombre = sstring::deserialize(entrada1);
+    c->artista = sstring::deserialize(entrada1);
+    c->duracion = sstring::deserializeInt(entrada1);
+
+    if (!entrada1.good())
+        throw - 1;
+}
+
+bool Cancion::serialize(ofstream& salida1, Cancion* u) {
+    sstring::serialize(salida1, u->nombre);
+    sstring::serialize(salida1, u->artista);
+    sstring::serializeInt(salida1, u->duracion);
+    return salida1.good();
+}
+
+void Cancion::setNombre(string n) {
+    nombre = n;
+}
+
+void Cancion::setArtista(string tS) {
+    artista = tS;
+}
+
+void Cancion::setDuracion(int tS) {
+    duracion = tS;
+}
+
+string Cancion::getNombre() const {
+    return this->nombre;
+}
+
+string Cancion::getArtista() const {
+    return this->artista;
+}
+
+int Cancion::getDuracion() const {
+    return this->duracion;
+}
+
+string Cancion::toString() const {
+    stringstream r;
+    r << BOLDRED << "Cancion:" << RESET << endl;
+    r << "Nombre: " << this->getNombre() << endl;
+    r << "Artista: " << this->getArtista() << endl;
+    r << "Duracion: " << this->getDuracion() << endl;
+
+    return r.str();
 }
