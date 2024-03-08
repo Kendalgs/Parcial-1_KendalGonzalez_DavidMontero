@@ -16,7 +16,7 @@ public:
     virtual string toString() const;
     void eliminar(string nombre, string artista);
     int duracionTotal() const;
-
+    void eliminarExceso();
 };
 
 

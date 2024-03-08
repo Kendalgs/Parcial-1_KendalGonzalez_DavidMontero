@@ -9,6 +9,7 @@ protected:
 	virtual ~utiles();
 public:
 	static int validarEntero();
+	
 };
 
 #endif

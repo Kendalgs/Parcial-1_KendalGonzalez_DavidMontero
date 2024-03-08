@@ -7,28 +7,28 @@
 listaPlaylist::~listaPlaylist() {
 }
 
-listaPlaylist::listaPlaylist(ifstream& entrada1) : lista<Cancion>() {
-    deserialize(entrada1, this);
+listaPlaylist::listaPlaylist(ifstream& entrada) : lista<Cancion>() {
+    deserialize(entrada, this);
 }
 
-bool listaPlaylist::guardar(ofstream& salida1) {
-    return serialize(salida1, (listaPlaylist*)this);
+bool listaPlaylist::guardar(ofstream& salida) {
+    return serialize(salida, (listaPlaylist*)this);
 }
 
 
-void listaPlaylist::deserialize(ifstream& entrada1, listaPlaylist* g) {
+void listaPlaylist::deserialize(ifstream& entrada, listaPlaylist* g) {
     int cantC = -1;
     int i = 0;
-    entrada1.read((char*)&cantC, sizeof(cantC));
+    entrada.read((char*)&cantC, sizeof(cantC));
 
-    while (entrada1.good() && i < cantC) {
+    while (entrada.good() && i < cantC) {
         try {
             Cancion* can = NULL;
 
-            if (!entrada1.good())
+            if (!entrada.good())
                 throw - 1;
 
-            can = new Cancion(entrada1);
+            can = new Cancion(entrada);
 
             if (can != NULL)
                 g->agregarFinal(can);
@@ -39,6 +39,7 @@ void listaPlaylist::deserialize(ifstream& entrada1, listaPlaylist* g) {
         i++;
     }
 }
+
 
 
 void listaPlaylist::eliminar(string nombre, string artista) {
@@ -66,9 +67,22 @@ int listaPlaylist::duracionTotal() const {
             duracionTotal += cancion->getDuracion();
         }
     }
-    return  duracionTotal
+    return  duracionTotal;
 }
 
+void listaPlaylist::eliminarExceso() {
+    while (totalCanciones() > 10) {
+        iterador<Cancion>* i = this->obtenerIterador();
+        while (i->masElementos()) {
+            Cancion* cancion = (Cancion*)i->proximoElemento();
+            if (cancion != nullptr) {
+                i->eliminar();
+                delete cancion;
+                break; // Elimina solo una canción por iteración
+            }
+        }
+    }
+}
 
 int listaPlaylist::totalCanciones() const {
     int cantCanciones = 0;

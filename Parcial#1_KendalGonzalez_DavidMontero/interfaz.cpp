@@ -1,9 +1,7 @@
 #include "interfaz.h"
+#include <limits>
 
-#define RESET   "\033[0m"
-#define BLUE    "\033[34m"
-#define GREEN   "\033[32m"
-#define MAGENTA "\033[35m"  
+ 
 
 // Ruta de los archivos de datos
 const string interfaz::archivo = "..\\Playlist.txt";
@@ -26,16 +24,16 @@ interfaz::interfaz()
         cin.get();
     }
     entrada.close();
+}
 
 
 
 // Destructor de la clase interfaz
-interfaz::~interfaz()
-{
-    delete _PersonaLibro;
-    delete _persona;
-    delete _libro;
-}
+    interfaz::~interfaz()
+    {
+        delete _listaPlaylist;
+
+    }
 
 // Función para seleccionar una opción y retornar un entero
 int interfaz::seleccionarOpcion()
@@ -51,13 +49,13 @@ int interfaz::seleccionarOpcion()
 void interfaz::mostrarOpciones()
 {
     cout << "\n\t\t";
-    cout << "1. Agregar Cancion " << endl;
+    cout << "1. Agregar Cancion a la playlist" << endl;
     cout << "\t\t";
-    cout << "2.Eliminar Cancion " << endl;
+    cout << "2.Eliminar Cancion de la playlist" << endl;
     cout << "\t\t";
-    cout << "3. Mostrar Duracion Total " << endl;
+    cout << "3. Mostrar Duracion Total de la playlist " << endl;
     cout << "\t\t";
-    cout << "4. Mostrar Canciones " << endl;
+    cout << "4. Mostrar Canciones de la playlist" << endl;
     cout << "\t\t";
     cout << "5. Cambiar Suscripcion " << endl;
     cout << "\t\t";
@@ -71,9 +69,14 @@ void interfaz::mostrarMenu()
     int opcion = 0;
     string nombre;
     string artista;
-    int duracion;
+    string duracion_str;
+    int duracion = 0;
+    int duracionTotal = 0;
+    string tipoSuscripcion = "Gratuita";
+    int ts = 0;
+    int cant = 0;
 
-    lista <listaPlaylist> listaPL;
+    Cancion* c;
     ofstream salida(archivo.c_str());
     bool final = false;
 
@@ -96,37 +99,56 @@ void interfaz::mostrarMenu()
             cout << "\n\n\t\t";
             cout << "***** Agregar una Cancion - Playlist ******";
             cout << "\n\n\t\t";
-            cout << "Digite el nombre: ";
-            cout << "\n\n\t\t";
-            getline(cin, nombre);
-            cout << "\n\n\t\t";
-            cout << "Digite el artista: ";
-            cout << "\n\n\t\t";
-            getline(cin, artista);
-            cout << "Digite la duracion: ";
-            cout << "\n\n\t\t";
-            getline(cin, duracion);
-            c = new Cancion(nombre, artista, duracion);
-            listaPe->agregarFinal(pe);
-            cout << "Se ha agregado una persona" << endl;
-            system("pause");
-            break;
+            if (tipoSuscripcion == "Gratuita" && _listaPlaylist->totalCanciones() >= 10) {
+                cout << "No puede agregar más canciones, alcanzó el límite de la suscripción gratuita." << endl;
+            }
+            else {
+                cout << "Digite el nombre: ";
+                cout << "\n\n\t\t";
+                getline(cin, nombre);
+                cout << "\n\n\t\t";
+                cout << "Digite el artista: ";
+                cout << "\n\n\t\t";
+                getline(cin, artista);
+                cout << "Digite la duracion en segundos: ";
+                while (true) {
+                    getline(cin, duracion_str);
+                    try {
+                        duracion = stoi(duracion_str);
+                        if (duracion > 0) {
+                            c = new Cancion(nombre, artista, duracion);
+                            _listaPlaylist->agregarFinal(c);
+                            cout << "Se ha agregado una cancion" << endl;
+                            system("pause");
+                            break; // Salir del bucle si el número es válido
+                        }
+                        else {
+                            cout << "Entrada invalida. Por favor, ingrese un numero mayor que 0: ";
+                        }
+                    }
+                    catch (invalid_argument&) {
+                        cout << "Entrada invalida. Por favor, ingrese un numero mayor que 0: ";
+                    }
+                    catch (out_of_range&) {
+                        cout << "El numero ingresado es demasiado grande. Por favor, ingrese un numero menor: ";
+                    }
+                }
+                break;
+
+            }
+            
+           
 
         case 2:
             system("cls");
             cout << "\n\n\t\t";
             cout << "***** Eliminar Cancion - Playlist ******";
             cout << "\n\n\t\t";
-            cout << "Digite el titulo del libro: ";
+            cout << "Digite el nombre de la cancion que quiere eliminar: ";
             cout << "\n\n\t\t";
-            getline(cin, titulo);
-            cout << "\n\n\t\t";
-            cout << "Digite el id del libro: ";
-            cout << "\n\n\t\t";
-            getline(cin, id);
-            li = new libro(titulo, id);
-            listaLi->agregarFinal(li);
-            cout << "Se ha agregado un libro!" << endl;
+            getline(cin, nombre);
+            _listaPlaylist->eliminar(nombre,artista);
+            cout << "Se ha eliminado la cancion de la playlist con exito!" << endl;
             system("pause");
             break;
 
@@ -135,16 +157,8 @@ void interfaz::mostrarMenu()
             cout << "\n\n\t\t";
             cout << "***** Mostrar Duracion Total - Playlist ******";
             cout << "\n\n\t\t";
-            cout << BLUE << "LISTA PERSONAS:" << endl;
-            cout << "****************************************" << RESET << endl;
-            cout << listaPe->toString() << endl;
-            cout << BLUE << "****************************************" << RESET << endl;
-
-            cout << GREEN << "LISTA LIBROS:" << endl;
-            cout << "****************************************" << RESET << endl;
-            cout << listaLi->toString() << endl;
-            cout << GREEN << "****************************************" << RESET << endl;
-
+            duracionTotal = _listaPlaylist->duracionTotal();
+            cout << "Duracion Total de la playlist" << duracionTotal << endl;
             system("pause");
             break;
 
@@ -153,30 +167,11 @@ void interfaz::mostrarMenu()
             cout << "\n\n\t\t";
             cout << "***** Mostrar Canciones - Playlist ******";
             cout << "\n\n\t\t";
-            cout << "Quiere asignar un libro a una persona o mostrar los libros asignados" << endl << "1. Asignar" << endl << "2. Mostrar Asignados" << endl;
-            cin >> opcion;
-            if (opcion == 1) {
-                cout << "Lista Personas:" << endl << listaPe->toString() << endl;
-                cout << "Lista Libros:" << endl << listaLi->toString() << endl;
-                cout << "Ingrese el id del libro que quiere asignar:" << endl;
-                cin >> id;
-                cout << "Ingrese el nombre de la persona a la que quiere asignarle el libro" << endl;
-                cin >> nombre;
-                ap = listaPe->buscarPersona(nombre);
-                al = listaLi->buscarLibro(id);
-                _PersonaLibro = new PersonaLibro(ap->getNombre(), ap->getApellido(), al->getId(), al->getTitulo());
-                listaPL.agregarFinal(_PersonaLibro);
-                cout << "Se ha asignado correctamente!" << endl;
-                system("pause");
-            }
-            else if (opcion == 2) {
-                system("cls");
-                cout << MAGENTA << "ASOCIADOS:" << endl;
-                cout << "****************************************" << RESET << endl;
-                cout << listaPL.toString() << endl;
-                cout << MAGENTA << "****************************************" << RESET << endl;
-                system("pause");
-            }
+            cout << MAGENTA << "PLAYLIST:" << endl;
+            cout << "****************************************" << RESET << endl;
+            cout << _listaPlaylist->toString() << endl;
+            cout << MAGENTA << "****************************************" << RESET << endl;
+            system("pause");
             break;
 
         case 5:
@@ -184,15 +179,62 @@ void interfaz::mostrarMenu()
             cout << "\n\n\t\t";
             cout << "***** Cambiar Suscripcion - Playlist ******";
             cout << "\n\n\t\t";
+            cout << "Seleccione el tipo de suscripcion: " << endl;
+            cout << "\t\t1. Gratuita" << endl;
+            cout << "\t\t2. Premium" << endl;
+            cout << "\t\t3. Familiar" << endl;
+            cout << "\n\t\t";
+
+            ts = seleccionarOpcion();
+            while (ts < 1 || ts > 3) {
+                cout << "\n\t\t";
+                cout << "Opcion invalida. Seleccione nuevamente: ";
+                ts = seleccionarOpcion();
+            }
+            switch (ts) {
+            case 1:
+                if (tipoSuscripcion == "Gratuita") {
+                    cout << "Ya tienes este tipo de suscrpcion" << endl;
+                }
+                else {
+                    if (tipoSuscripcion == "Premium" && tipoSuscripcion == "Familiar") {
+                        cant = _listaPlaylist->totalCanciones();
+                        if (cant > 10) {
+                            _listaPlaylist->eliminarExceso();
+                        }
+                    }
+                    else {
+                        tipoSuscripcion = "Gratuita";
+                        cout << "Se ha cambiado el tipo de suscripcion" << endl;
+                    }
+                }
+                
+                break;
+            case 2:
+                if (tipoSuscripcion == "Premium") {
+                    cout << "Ya tienes este tipo de suscrpcion" << endl;
+                }
+                else {
+                    tipoSuscripcion = "Premium";
+                    cout << "Se ha cambiado el tipo de suscripcion" << endl;
+                }
+                break;
+            case 3:
+                if (tipoSuscripcion == "Familiar") {
+                    cout << "Ya tienes este tipo de suscrpcion" << endl;
+                }
+                else {
+                    tipoSuscripcion = "Familiar";
+                    cout << "Se ha cambiado el tipo de suscripcion" << endl;
+                }
+                break;
+            }
+            system("pause");
             break;
 
         case 6:
-            listaPL.guardar(salida);
-            listaPe->guardar(salida1);
-            listaLi->guardar(salida2);
+            _listaPlaylist->guardar(salida);
             salida.close();
-            salida1.close();
-            salida2.close();
             cout << "\n\t\t";
             cout << "Los datos se guardaron exitosamente en el archivo" << endl;
             final = true;

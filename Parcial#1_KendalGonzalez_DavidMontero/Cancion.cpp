@@ -66,7 +66,7 @@ int Cancion::getDuracion() const {
 
 string Cancion::toString() const {
     stringstream r;
-    r << BOLDRED << "Cancion:" << RESET << endl;
+    r << GREEN << "Cancion:" << RESET << endl;
     r << "Nombre: " << this->getNombre() << endl;
     r << "Artista: " << this->getArtista() << endl;
     r << "Duracion: " << this->getDuracion() << endl;
