@@ -20,27 +20,27 @@ public:
     // Método que devuelve el próximo elemento en la lista
     virtual T* proximoElemento();
 
-    virtual void eliminar();
+    virtual void eliminarElemento();
 
 private:
     // Puntero al nodo actual en la lista
     nodo<T>* cursor;
-
+    nodo<T>* inicio;
 };
 
 
 template <class T>
-void iteradorLista<T>::eliminar() {
+void iteradorLista<T>::eliminarElemento() {
     if (cursor != nullptr) {
         // Guardamos una referencia al nodo anterior para poder actualizar sus enlaces
         nodo<T>* anterior = nullptr;
 
         // Recorremos la lista hasta encontrar el nodo actual
         nodo<T>* actual = this->inicio;
-        while (actual != nullptr && actual != cursor) {
-            anterior = actual;
-            actual = actual->obtenerSiguiente();
-        }
+            while (actual != nullptr && actual != cursor) {
+                anterior = actual;
+                actual = actual->obtenerSiguiente();
+            }
 
         // Si encontramos el nodo actual
         if (actual == cursor) {

@@ -14,9 +14,11 @@ public:
     static bool serialize(ofstream&, listaPlaylist*);
     int totalCanciones() const;
     virtual string toString() const;
-    void eliminar(string nombre, string artista);
+    virtual void eliminarNombre(string nombre);
     int duracionTotal() const;
     void eliminarExceso();
+
+
 };
 
 

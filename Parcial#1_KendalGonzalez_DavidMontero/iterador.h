@@ -14,7 +14,7 @@ public:
     // Método virtual puro para obtener el próximo elemento
     virtual T* proximoElemento() = 0;
 
-    virtual void eliminar() = 0;
+    virtual void eliminarElemento() = 0;
 
 };
 

@@ -51,7 +51,7 @@ void interfaz::mostrarOpciones()
     cout << "\n\t\t";
     cout << "1. Agregar Cancion a la playlist" << endl;
     cout << "\t\t";
-    cout << "2.Eliminar Cancion de la playlist" << endl;
+    cout << "2. Eliminar Cancion de la playlist" << endl;
     cout << "\t\t";
     cout << "3. Mostrar Duracion Total de la playlist " << endl;
     cout << "\t\t";
@@ -87,7 +87,7 @@ void interfaz::mostrarMenu()
         mostrarOpciones();
         op = seleccionarOpcion();
 
-        while (op > 5) {
+        while (op > 6) {
             cout << "\n\n\t\t";
             cout << "Opcion invalida !!!";
             op = seleccionarOpcion();
@@ -100,7 +100,9 @@ void interfaz::mostrarMenu()
             cout << "***** Agregar una Cancion - Playlist ******";
             cout << "\n\n\t\t";
             if (tipoSuscripcion == "Gratuita" && _listaPlaylist->totalCanciones() >= 10) {
-                cout << "No puede agregar más canciones, alcanzó el límite de la suscripción gratuita." << endl;
+                cout << "No puede agregar mas canciones, alcanzo el limite de la suscripcion gratuita." << endl;
+                system("pause");
+                break;
             }
             else {
                 cout << "Digite el nombre: ";
@@ -110,9 +112,12 @@ void interfaz::mostrarMenu()
                 cout << "Digite el artista: ";
                 cout << "\n\n\t\t";
                 getline(cin, artista);
+                cout << "\n\n\t\t";
                 cout << "Digite la duracion en segundos: ";
                 while (true) {
+                    cout << "\n\n\t\t";
                     getline(cin, duracion_str);
+                    cout << "\n\n\t\t";
                     try {
                         duracion = stoi(duracion_str);
                         if (duracion > 0) {
@@ -140,16 +145,26 @@ void interfaz::mostrarMenu()
            
 
         case 2:
-            system("cls");
-            cout << "\n\n\t\t";
-            cout << "***** Eliminar Cancion - Playlist ******";
-            cout << "\n\n\t\t";
-            cout << "Digite el nombre de la cancion que quiere eliminar: ";
-            cout << "\n\n\t\t";
-            getline(cin, nombre);
-            _listaPlaylist->eliminar(nombre,artista);
-            cout << "Se ha eliminado la cancion de la playlist con exito!" << endl;
-            system("pause");
+            try {
+                system("cls");
+                cout << "\n\n\t\t";
+                cout << "***** Eliminar Cancion - Playlist ******";
+                cout << "\n\n\t\t";
+                cout << MAGENTA << "PLAYLIST:" << endl;
+                cout << "****************************************" << RESET << endl;
+                cout << _listaPlaylist->toString() << endl;
+                cout << MAGENTA << "****************************************" << RESET << endl;
+                cout << "\n\n\t\t";
+                cout << "Digite el nombre de la cancion que quiere eliminar: ";
+                cout << "\n\n\t\t";
+                getline(cin, nombre);
+                _listaPlaylist->eliminarNombre(nombre);
+                //cout << _listaPlaylist->toString() << endl;
+                system("pause");
+            }
+            catch(const exception& e){
+                cout << e.what() << endl;
+            }
             break;
 
         case 3:
@@ -158,7 +173,7 @@ void interfaz::mostrarMenu()
             cout << "***** Mostrar Duracion Total - Playlist ******";
             cout << "\n\n\t\t";
             duracionTotal = _listaPlaylist->duracionTotal();
-            cout << "Duracion Total de la playlist" << duracionTotal << endl;
+            cout << "Duracion Total de la playlist: " << duracionTotal << endl;
             system("pause");
             break;
 
@@ -166,12 +181,19 @@ void interfaz::mostrarMenu()
             system("cls");
             cout << "\n\n\t\t";
             cout << "***** Mostrar Canciones - Playlist ******";
-            cout << "\n\n\t\t";
-            cout << MAGENTA << "PLAYLIST:" << endl;
-            cout << "****************************************" << RESET << endl;
-            cout << _listaPlaylist->toString() << endl;
-            cout << MAGENTA << "****************************************" << RESET << endl;
-            system("pause");
+            if (_listaPlaylist->vacio()) {
+                cout << "\n\n\t\t";
+                cout << "La playlist esta vacia" << endl;
+                system("pause");
+            }
+            else {
+                cout << "\n\n\t\t";
+                cout << MAGENTA << "PLAYLIST:" << endl;
+                cout << "****************************************" << RESET << endl;
+                cout << _listaPlaylist->toString() << endl;
+                cout << MAGENTA << "****************************************" << RESET << endl;
+                system("pause");
+            }
             break;
 
         case 5:
@@ -197,10 +219,12 @@ void interfaz::mostrarMenu()
                     cout << "Ya tienes este tipo de suscrpcion" << endl;
                 }
                 else {
-                    if (tipoSuscripcion == "Premium" && tipoSuscripcion == "Familiar") {
+                    if (tipoSuscripcion == "Premium" || tipoSuscripcion == "Familiar") {
                         cant = _listaPlaylist->totalCanciones();
                         if (cant > 10) {
                             _listaPlaylist->eliminarExceso();
+                            tipoSuscripcion = "Gratuita";
+                            cout << "Se ha cambiado el tipo de suscripcion" << endl;
                         }
                     }
                     else {

@@ -42,20 +42,7 @@ void listaPlaylist::deserialize(ifstream& entrada, listaPlaylist* g) {
 
 
 
-void listaPlaylist::eliminar(string nombre, string artista) {
-    iterador<Cancion>* i = this->obtenerIterador();
-    while (i->masElementos()) {
-        Cancion* cancion = (Cancion*)i->proximoElemento();
-        if (cancion != NULL && cancion->getNombre() == nombre) {
-            // Si se encuentra una coincidencia en el nombre, verificar el nombre del artista
-            if (cancion->getArtista() == artista) {
-                // Eliminar la canción y salir del bucle
-                i->eliminar();
-                break;
-            }
-        }
-    }
-}
+
 
 int listaPlaylist::duracionTotal() const {
     int duracionTotal = 0;
@@ -72,17 +59,39 @@ int listaPlaylist::duracionTotal() const {
 
 void listaPlaylist::eliminarExceso() {
     while (totalCanciones() > 10) {
+        // Obtener un iterador para recorrer la lista de canciones
         iterador<Cancion>* i = this->obtenerIterador();
         while (i->masElementos()) {
             Cancion* cancion = (Cancion*)i->proximoElemento();
             if (cancion != nullptr) {
-                i->eliminar();
+                // Eliminar la canción actual
+                i->eliminarElemento();
                 delete cancion;
-                break; // Elimina solo una canción por iteración
+                 // Salir del bucle para eliminar solo una canción por iteración
             }
         }
     }
 }
+
+
+void listaPlaylist::eliminarNombre(string nombre) {
+    iterador<Cancion>* i = this->obtenerIterador();
+    while (i->masElementos()) {
+        Cancion* cancion = i->proximoElemento();
+        if (cancion != nullptr && cancion->getNombre() == nombre) {
+            // Si se encuentra una coincidencia en el nombre se elimina
+            
+            i->eliminarElemento();
+            delete cancion;
+            
+            // Avanzar al siguiente elemento
+            continue;
+        }
+    }
+    delete i; // Liberar memoria del iterador
+}
+
+
 
 int listaPlaylist::totalCanciones() const {
     int cantCanciones = 0;
